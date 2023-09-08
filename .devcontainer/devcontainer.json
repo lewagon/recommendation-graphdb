@@ -1,0 +1,13 @@
+{
+	"name": "Python 3 & neo4j",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "app",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	"features": {
+		"ghcr.io/devcontainers/features/python:1": {
+			"installTools": true,
+			"installJupyterlab": true,
+			"version": "3.9"
+		}
+	}
+}
