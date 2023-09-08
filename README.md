@@ -65,5 +65,43 @@ WHERE NOT (rec)-[:COLLECTION]->(favCollection)
 RETURN rec.name AS RecommendedRecipe, sharedKeywords, sharedIngredients
 ORDER BY sharedKeywords DESC, sharedIngredients DESC
 LIMIT 10
-
 ```
+
+```sql
+WITH "Pull-apart chicken with green curry & lime leaf dressing" AS favoriteRecipeName
+
+MATCH (fav:Recipe {name: favoriteRecipeName})
+OPTIONAL MATCH (fav)-[:CONTAINS_INGREDIENT]->(i:Ingredient)
+OPTIONAL MATCH (fav)-[:KEYWORD]->(k:Keyword)
+OPTIONAL MATCH (fav)<-[:WROTE]-(a:Author)
+
+WITH fav, i, k, a, COUNT(a) AS authorInfluence
+ORDER BY authorInfluence DESC
+LIMIT 10
+
+MATCH (rec:Recipe)-[:CONTAINS_INGREDIENT]->(i), (rec)-[:KEYWORD]->(k), (rec)<-[:WROTE]-(a)
+WHERE rec <> fav
+WITH rec, COUNT(i) + COUNT(k) AS relevanceScore
+ORDER BY relevanceScore DESC
+LIMIT 10
+
+RETURN rec.name AS RecommendedRecipe, relevanceScore
+```
+
+These look similar which is great but what about if we want to leverage the graph to find things related that are not too similar!
+
+```sql
+WITH "Pull-apart chicken with green curry & lime leaf dressing" AS favoriteRecipeName
+
+MATCH (fav:Recipe {name: favoriteRecipeName})
+
+MATCH (fav)-[:CONTAINS_INGREDIENT|KEYWORD|WROTE*4]-(rec:Recipe)-[:DIET_TYPE]->(d:DietType {name: "Vegan"})
+WHERE fav <> rec
+WITH rec, COUNT(*) AS pathsOfLength4
+ORDER BY pathsOfLength4 DESC
+LIMIT 5
+
+RETURN rec.name AS RecommendedRecipe, pathsOfLength4
+```
+
+Super intresting results if you want to dig deeper you can being here (https://neo4j.com/docs/getting-started/appendix/tutorials/guide-build-a-recommendation-engine/) and keep digging!
