@@ -10,10 +10,24 @@ class AddRecipes:
 
     def complete_recipes(self):
         with self.driver.session() as session:
+            session.execute_write(self._import_authors)
             session.execute_write(self._import_ingredients)
             session.execute_write(self._import_keywords)
             session.execute_write(self._import_diet_types)
             session.execute_write(self._import_collections)
+
+    @staticmethod
+    def _import_authors(tx):
+        query = """
+        CALL apoc.load.json('https://raw.githubusercontent.com/neo4j-examples/graphgists/master/browser-guides/data/stream_clean.json') YIELD value
+        WITH value.page.article.id AS id,
+            value.page.article.author AS author
+        MERGE (a:Author {name: author})
+        WITH a,id
+        MATCH (r:Recipe {id:id})
+        MERGE (a)-[:WROTE]->(r);
+        """
+        tx.run(query)
 
     @staticmethod
     def _import_ingredients(tx):
