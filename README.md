@@ -2,7 +2,7 @@
 
 ## Getting setup
 
-Lets use docker to help us set up an enviroment to
+Lets use docker to help us set up an environment to run the graph database in!
 
 ## Add the recipes
 
