@@ -10,7 +10,7 @@ services:
     command: sleep infinity
 
   database:
-    image: neo4j:4.4.23-community
+    image: neo4j:5.24.1-community-bullseye
     environment:
       - NEO4J_AUTH=neo4j/abc123
       - apoc.export.file.enabled=true
