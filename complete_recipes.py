@@ -86,6 +86,6 @@ class AddRecipes:
         tx.run(query)
 
 if __name__ == "__main__":
-    recipes = AddRecipes("bolt://database:7687", "neo4j", "abc123")
+    recipes = AddRecipes("bolt://database:7687", "neo4j", "abcd1234")
     recipes.complete_recipes()
     recipes.close()
